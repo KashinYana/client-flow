@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 from collections import Counter
 
-def load_dataframe():
+def load_dataframe(use_pandas_datatime=False):
     file = 'data.txt'
     data = []
 
@@ -30,12 +30,16 @@ def load_dataframe():
         categories.append(line[1])
         days.append(datetime.datetime.strptime(line[2], "%d.%m.%Y").date())
         hours.append(int(line[3]))
-
     df = pd.DataFrame({
-            "SUBBRANCH_ID":  pd.Series(branches),
-            "OPCAT_CATEGORY":  pd.Series(categories),
-            "DAY":  pd.Series(days),
-            "HOUR":  pd.Series(hours),
-            "SIZE":  pd.Series(count),
-        })
-    return df
+                "SUBBRANCH_ID":  pd.Series(branches),
+                "OPCAT_CATEGORY":  pd.Series(categories),
+                "DAY":  pd.Series(days),
+                "HOUR":  pd.Series(hours),
+                "SIZE":  pd.Series(count),
+            })
+
+    if not use_pandas_datatime:
+        return df
+    else:
+        df[['DAY']] = df[['DAY']].apply(pd.to_datetime)
+        return df
